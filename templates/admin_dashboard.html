@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📊 Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #e0f7fa, #f8f9fa);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #007bff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      animation: fadeInDown 1s ease-in-out;
+    }
+    .card {
+      border-radius: 15px;
+      box-shadow: 0px 6px 15px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .btn-custom {
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+    .btn-custom:hover {
+      transform: scale(1.05);
+    }
+    table {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .badge {
+      font-size: 0.9rem;
+    }
+    #fraudChartContainer {
+      display: none;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <h2 class="text-center dashboard-title mb-4">📊 Admin Dashboard</h2>
+
+    <!-- Fraud Stats & Exports -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm p-3 text-center">
+          <h5><i class="bi bi-graph-up-arrow text-primary"></i> Fraud Statistics</h5>
+          <p><strong>Total Predictions:</strong> {{ total }}</p>
+          <p><strong>Fraud Rate:</strong> {{ fraud_rate }}%</p>
+          
+          <!-- Generate Report Button -->
+          <button class="btn btn-warning btn-custom mt-2" onclick="showFraudChart()">
+            <i class="bi bi-bar-chart-line"></i> Generate Report
+          </button>
+
+          <!-- Fraud Chart (hidden until Generate Report clicked) -->
+          <div id="fraudChartContainer" class="mt-3">
+            <canvas id="fraudChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card shadow-sm p-3">
+          <h5><i class="bi bi-download text-success"></i> Exports</h5>
+          <a href="{{ url_for('download_users') }}" class="btn btn-primary btn-custom w-100 mb-2">
+            <i class="bi bi-people"></i> Download Users CSV
+          </a>
+          <a href="{{ url_for('download_predictions') }}" class="btn btn-success btn-custom w-100">
+            <i class="bi bi-file-earmark-text"></i> Download Predictions CSV
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Predictions -->
+    <div class="card shadow-sm mb-4 p-3">
+      <h5><i class="bi bi-activity text-danger"></i> Recent Predictions</h5>
+      {% if logs and logs|length > 0 %}
+      <table class="table table-hover align-middle text-center">
+        <thead class="table-primary">
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Model</th>
+            <th>Prediction</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.username }}</td>
+            <td>{{ log.model }}</td>
+            <td>
+              {% if log.prediction == 1 %}
+                <span class="badge bg-danger"><i class="bi bi-exclamation-octagon"></i> Fraud</span>
+              {% else %}
+                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Safe</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted">No predictions available.</p>
+      {% endif %}
+    </div>
+
+    <!-- Registered Users -->
+    <div class="card shadow-sm mb-4 p-3">
+      <h5><i class="bi bi-person-lines-fill text-info"></i> Registered Users</h5>
+      {% if users and users|length > 0 %}
+      <table class="table table-striped align-middle text-center">
+        <thead class="table-success">
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Registered At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.created_at }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted">No users registered yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- Logout -->
+    <div class="text-center mb-4">
+      <a href="{{ url_for('logout') }}" class="btn btn-danger btn-custom">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- Fraud Pie Chart -->
+  <script>
+    function showFraudChart() {
+      document.getElementById("fraudChartContainer").style.display = "block";
+
+      const fraudData = {
+        labels: ['Safe', 'Fraud'],
+        datasets: [{
+          data: [{{ fraud_counts[0] }}, {{ fraud_counts[1] }}],
+          backgroundColor: ['#28a745', '#dc3545']
+        }]
+      };
+
+      const config = {
+        type: 'pie',
+        data: fraudData,
+      };
+
+      new Chart(document.getElementById('fraudChart'), config);
+    }
+  </script>
+</body>
+</html>

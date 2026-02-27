@@ -1,0 +1,253 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🧠 Prediction Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            max-width: 700px;
+            margin: auto;
+            padding: 40px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        img {
+            display: block;
+            margin: 30px auto;
+            max-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>✅ Prediction Results</h2>
+
+    <p><strong>Random Forest Prediction:</strong> {{ rf }}</p>
+    <p><strong>Decision Tree Prediction:</strong> {{ dt }}</p>
+    <p><strong>XGBoost Prediction:</strong> {{ xgb }}</p>
+    <p><strong>CNN Prediction:</strong> {{ cnn }}</p>
+
+    <h3 style="text-align:center;">SHAP Explanation Plot</h3>
+    <img src="{{ shap_image }}" alt="SHAP Plot">
+
+    <a href="/">🔁 Try Another Prediction</a>
+</body>
+</html>
+
+
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>✅ Prediction Results</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #dff9fb, #f6f9fc, #e8f5e9);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .results-container {
+      background: #ffffff;
+      padding: 40px;
+      max-width: 950px;
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: bold;
+      font-size: 2.2rem;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+    }
+
+    .result-card {
+      background: linear-gradient(135deg, #e8f5e9, #d4efdf);
+      border: 2px solid #c8e6c9;
+      border-radius: 18px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 30px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .result-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .result-card h3 {
+      font-size: 1.5rem;
+      color: #1e8449;
+      margin-bottom: 18px;
+    }
+
+    .result-card p {
+      font-size: 1.1rem;
+      margin: 12px 0;
+      color: #2c3e50;
+    }
+
+    .confidence {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #e67e22;
+      margin-top: 12px;
+    }
+
+    .progress {
+      height: 22px;
+      margin-top: 14px;
+      border-radius: 12px;
+      background: #f5f5f5;
+    }
+
+    .progress-bar {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .shap-section {
+      text-align: center;
+      margin-top: 30px;
+      padding: 25px;
+      background: linear-gradient(135deg, #f1f8ff, #f9fbfd);
+      border-radius: 15px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .shap-section h3 {
+      font-size: 1.4rem;
+      color: #34495e;
+      margin-bottom: 18px;
+    }
+
+    .shap-section img {
+      max-width: 100%;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .shap-section img:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-custom {
+      display: inline-block;
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .download-btn {
+      background: linear-gradient(90deg, #007bff, #00c6ff);
+      color: #fff;
+      margin-top: 18px;
+    }
+
+    .download-btn:hover {
+      background: linear-gradient(90deg, #00c6ff, #007bff);
+      transform: scale(1.07);
+    }
+
+    .back-btn {
+      background: linear-gradient(90deg, #28a745, #66bb6a);
+      color: #fff;
+      margin-top: 35px;
+    }
+
+    .back-btn:hover {
+      background: linear-gradient(90deg, #66bb6a, #28a745);
+      transform: scale(1.07);
+    }
+  </style>
+</head>
+<body>
+  <div class="results-container">
+    <h2><i class="bi bi-bar-chart-fill"></i> Prediction Results</h2>
+
+    <div class="result-card">
+      <h3><i class="bi bi-cpu"></i> Model Used: {{ model_used }}</h3>
+      <p><i class="bi bi-check-circle-fill text-success"></i> <b>Prediction:</b> {{ prediction }}</p>
+      {% if confidence %}
+        <p class="confidence"><i class="bi bi-graph-up-arrow"></i> Confidence: {{ confidence }}%</p>
+        <div class="progress">
+          <div class="progress-bar bg-success" role="progressbar" 
+               style="width: {{ confidence }}%" 
+               aria-valuenow="{{ confidence }}" aria-valuemin="0" aria-valuemax="100">
+            {{ confidence }}%
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if shap_plot %}
+    <div class="shap-section">
+      <h3><i class="bi bi-bar-chart-line-fill"></i> SHAP Explanation</h3>
+      <img src="{{ shap_plot }}" alt="SHAP Plot">
+      <div>
+        <a href="{{ shap_plot }}" download="shap_plot.png" class="btn-custom download-btn">
+          <i class="bi bi-download"></i> Download SHAP Plot
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="text-center">
+      <a href="{{ url_for('dashboard') }}" class="btn-custom back-btn">
+        <i class="bi bi-arrow-repeat"></i> Try Another Prediction
+      </a>
+    </div>
+  </div>
+</body>
+</html>

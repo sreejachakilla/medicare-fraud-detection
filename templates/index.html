@@ -1,0 +1,349 @@
+<!-- templates/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🧠 Medicare Fraud Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f3;
+            padding: 40px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        form {
+            background: #fff;
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 12px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .flash {
+            color: red;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>🔍 Medicare Fraud Prediction Form</h2>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <form method="POST" action="/predict">
+
+        <label>Claim Amount:</label>
+        <input type="number" name="Claim_Amount" required>
+
+        <label>Procedure Code:</label>
+        <input type="text" name="Procedure_Code" required>
+
+        <label>Diagnosis Code:</label>
+        <input type="text" name="Diagnosis_Code" required>
+
+        <label>Number of Procedures:</label>
+        <input type="number" name="Number_of_Procedures" required>
+
+        <label>Days Admitted:</label>
+        <input type="number" name="Days_Admitted" required>
+
+        <label>Patient Age:</label>
+        <input type="number" name="Patient_Age" required>
+
+        <label>Patient Gender:</label>
+        <select name="Patient_Gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+
+        <label>Hospital Type:</label>
+        <select name="Hospital_Type" required>
+            <option value="Hospital">Hospital</option>
+            <option value="Clinic">Clinic</option>
+        </select>
+
+        <label>Insurance Type:</label>
+        <select name="Insurance_Type" required>
+            <option value="Private">Private</option>
+            <option value="Government">Government</option>
+        </select>
+
+        <label>Claim Day:</label>
+        <select name="Claim_Day" required>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+        </select>
+
+        <button type="submit">Predict Fraud</button>
+    </form>
+</body>
+</html> -->
+
+<!-- templates/index.html --> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🧠 Medicare Fraud Detection</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://img.freepik.com/free-vector/abstract-healthcare-medical-background-design_1017-26807.jpg') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 🔹 Navbar */
+    .navbar {
+      background: rgba(0, 123, 255, 0.9);
+    }
+    .navbar .navbar-brand, .navbar .nav-link {
+      color: #fff !important;
+      font-weight: bold;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffffff;
+      font-weight: bold;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+      margin-bottom: 25px;
+      font-size: 2.2rem;
+      background: rgba(0, 123, 255, 0.85);
+      padding: 15px 25px;
+      border-radius: 15px;
+      display: inline-block;
+    }
+
+    .title-container {
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    form {
+      background: linear-gradient(135deg, rgba(0,123,255,0.9), rgba(0,200,150,0.9), rgba(255,140,0,0.9));
+      padding: 35px;
+      max-width: 700px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.4);
+      position: relative;
+      z-index: 2;
+      margin-bottom: 60px;
+      color: #fff;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    label i {
+      margin-right: 8px;
+      color: #fffa;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 5px;
+      background: rgba(255,255,255,0.85);
+      color: #000;
+      font-weight: 500;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border: 2px solid #fff;
+      box-shadow: 0 0 10px rgba(255,255,255,0.7);
+    }
+
+    button {
+      background: linear-gradient(90deg, #ff6a00, #ee0979, #00c6ff);
+      color: white;
+      padding: 14px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 25px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #ee0979, #ff6a00, #00c6ff);
+      transform: scale(1.05);
+    }
+
+    /* Floating icons */
+    .floating-icon {
+      position: fixed;
+      bottom: -50px;
+      font-size: 2rem;
+      opacity: 0.8;
+      z-index: 1;
+      animation: floatUp linear forwards;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-120vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔹 Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">🧠 Fraud Detection</a>
+      <div class="d-flex">
+        <span class="navbar-text me-3">👋 Welcome, {{ session['user'] if session.get('user') else 'Guest' }}</span>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">🚪 Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="title-container">
+    <h2>🔍 Medicare Fraud Prediction</h2>
+  </div>
+
+  <form method="POST" action="/predict">
+    <label>💰 Claim Amount:</label>
+    <input type="number" name="Claim_Amount" required>
+
+    <label>🧾 Procedure Code:</label>
+    <input type="text" name="Procedure_Code" required>
+
+    <label>🧪 Diagnosis Code:</label>
+    <input type="text" name="Diagnosis_Code" required>
+
+    <label>⚕️ Number of Procedures:</label>
+    <input type="number" name="Number_of_Procedures" required>
+
+    <label>🏥 Days Admitted:</label>
+    <input type="number" name="Days_Admitted" required>
+
+    <label>🎂 Patient Age:</label>
+    <input type="number" name="Patient_Age" required>
+
+    <label>⚧️ Patient Gender:</label>
+    <select name="Patient_Gender" required>
+      <option value="">-- ⚧ Select Gender --</option>
+      <option value="Male">👨 Male</option>
+      <option value="Female">👩 Female</option>
+    </select>
+
+    <label>🏥 Hospital Type:</label>
+    <select name="Hospital_Type" required>
+      <option value="">-- 🏥 Select Hospital Type --</option>
+      <option value="Speciality">⚕️ Speciality</option>
+      <option value="Clinic">🏨 Clinic</option>
+      <option value="General">🏥 General</option>
+      <option value="Teaching">📚 Teaching</option>
+    </select>
+
+    <label>💳 Insurance Type:</label>
+    <select name="Insurance_Type" required>
+      <option value="">-- 💳 Select Insurance Type --</option>
+      <option value="Private">🔒 Private</option>
+      <option value="Government">🏛️ Government</option>
+      <option value="Employer">🏢 Employer</option>
+      <option value="Self-pay">💵 Self-pay</option>
+    </select>
+
+    <label>📅 Claim Day:</label>
+    <select name="Claim_Day" required>
+      <option value="">-- 📅 Select Claim Day --</option>
+      <option value="Monday">🌞 Monday</option>
+      <option value="Tuesday">🌮 Tuesday</option>
+      <option value="Wednesday">📆 Wednesday</option>
+      <option value="Thursday">📋 Thursday</option>
+      <option value="Friday">🎉 Friday</option>
+    </select>
+
+    <label>🤖 Choose Prediction Model:</label>
+    <select name="selected_model" required>
+      <option value="">-- 🤖 Select Model --</option>
+      <option value="rf">🌲 Random Forest</option>
+      <option value="dt">🌳 Decision Tree</option>
+      <option value="xgb">⚡ XGBoost</option>
+      <option value="cnn">🧠 CNN</option>
+      <option value="transformer">🔗 Transformer</option>
+      <option value="hybrid">🌀 Hybrid</option>
+    </select>
+
+    <button type="submit">⚡ Predict Fraud</button>
+  </form>
+
+  <script>
+    const icons = ["💊", "🩺", "💉", "❤️", "🏥"];
+    function createIcon() {
+      const icon = document.createElement("div");
+      icon.className = "floating-icon";
+      icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+      icon.style.left = Math.random() * 95 + "vw";
+      const duration = 10 + Math.random() * 10;
+      icon.style.animationDuration = duration + "s";
+      document.body.appendChild(icon);
+
+      setTimeout(() => {
+        icon.remove();
+      }, duration * 1000);
+    }
+    setInterval(createIcon, 1200);
+  </script>
+
+</body>
+</html>
